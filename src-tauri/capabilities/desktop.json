@@ -10,6 +10,11 @@
     "clipboard-manager:allow-read-text",
     "clipboard-manager:allow-write-text",
     "user-input:default",
+    "core:tray:default",
+    "core:app:allow-default-window-icon",
+    "core:window:allow-hide",
+    "core:window:allow-show",
+    "process:allow-exit",
     {
       "identifier": "http:default",
       "allow": [{ "url": "https://api.groq.com/**" }]

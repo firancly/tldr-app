@@ -8,7 +8,7 @@ pub fn run() {
             .with_shortcuts(["alt+s", "alt+e"])
             .expect("Failed to parse shortcut string")
             .with_handler(|app, shortcut, event| {
-                if event.state == ShortcutState::Pressed {
+                if event.state == ShortcutState::Released {
                     if shortcut.matches(Modifiers::ALT, Code::KeyS) {
                         let _ = app.emit("shortcut-triggered", "summarize");
                     } else if shortcut.matches(Modifiers::ALT, Code::KeyE) {
@@ -20,6 +20,7 @@ pub fn run() {
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_user_input::init())
+        .plugin(tauri_plugin_process::init())
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
