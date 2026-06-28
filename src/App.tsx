@@ -61,11 +61,8 @@ async function showResultWindow(text: string, mode: string) {
     alwaysOnTop: true,
     resizable: false,
     skipTaskbar: true,
-    transparent: true,
     shadow: false,
-    windowEffects: {
-      effects: [Effect.Mica],
-    },
+    transparent: true,
   });
 
   const unlistenReady = await listen("popup-ready", async () => {

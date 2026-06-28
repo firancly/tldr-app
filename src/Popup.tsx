@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { listen, emit } from "@tauri-apps/api/event";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { LogicalSize } from "@tauri-apps/api/dpi";
+import { invoke } from "@tauri-apps/api/core";
 
 interface ResultPayload {
   text: string;
@@ -22,6 +23,7 @@ export default function Popup() {
         setData(event.payload);
       });
 
+      await invoke("apply_glass_effect");
       await emit("popup-ready");
     };
 
@@ -75,16 +77,21 @@ export default function Popup() {
     return () => clearInterval(interval);
   }, [data]);
 
-  // Resize window to fit content as text types out
+  const lastResizeRef = useRef(0);
+
   useEffect(() => {
     if (!contentRef.current) return;
 
-    const height = Math.min(
-      500,
-      Math.max(80, contentRef.current.scrollHeight + 32),
-    );
+    const isDone =
+      displayedText.length === (data?.text.length ?? displayedText.length);
+    const now = Date.now();
+
+    if (!isDone && now - lastResizeRef.current < 100) return;
+    lastResizeRef.current = now;
+
+    const height = Math.min(500, Math.max(80, contentRef.current.scrollHeight));
     getCurrentWindow().setSize(new LogicalSize(320, height));
-  }, [displayedText]);
+  }, [displayedText, data]);
 
   return (
     <div
@@ -95,12 +102,9 @@ export default function Popup() {
         boxSizing: "border-box",
         borderRadius: 16,
         overflow: "hidden",
-        border: "1px solid rgba(255,255,255,0.25)",
-        background: "rgba(255, 255, 255, 0.04)",
         padding: 16,
         fontFamily: "sans-serif",
         color: "#fff",
-        boxShadow: "0 8px 32px rgba(0,0,0,0.25)",
       }}
     >
       <strong>{data?.mode === "enhance" ? "Enhanced" : "Summary"}</strong>
