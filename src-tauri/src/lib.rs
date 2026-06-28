@@ -5,13 +5,24 @@ use tauri_plugin_global_shortcut::{Code, Modifiers, ShortcutState};
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_global_shortcut::Builder::new()
-            .with_shortcuts(["alt+s", "alt+e"])
+            // .with_shortcuts(["alt+shift+s", "alt+shift+e"])
+            // .expect("Failed to parse shortcut string")
+            // .with_handler(|app, shortcut, event| {
+            //     if event.state == ShortcutState::Released {
+            //         if shortcut.matches(Modifiers::ALT | Modifiers::SHIFT, Code::KeyS) {
+            //             let _ = app.emit("shortcut-triggered", "summarize");
+            //         } else if shortcut.matches(Modifiers::ALT | Modifiers::SHIFT, Code::KeyE) {
+            //             let _ = app.emit("shortcut-triggered", "enhance");
+            //         }
+            //     }
+            // })
+            .with_shortcuts(["f9", "f10"])
             .expect("Failed to parse shortcut string")
             .with_handler(|app, shortcut, event| {
                 if event.state == ShortcutState::Released {
-                    if shortcut.matches(Modifiers::ALT, Code::KeyS) {
+                    if shortcut.matches(Modifiers::empty(), Code::F9) {
                         let _ = app.emit("shortcut-triggered", "summarize");
-                    } else if shortcut.matches(Modifiers::ALT, Code::KeyE) {
+                    } else if shortcut.matches(Modifiers::empty(), Code::F10) {
                         let _ = app.emit("shortcut-triggered", "enhance");
                     }
                 }

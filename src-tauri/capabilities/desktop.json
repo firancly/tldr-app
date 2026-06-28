@@ -1,7 +1,7 @@
 {
   "identifier": "desktop-capability",
   "platforms": ["macOS", "windows", "linux"],
-  "windows": ["main"],
+  "windows": ["main", "result"],
   "permissions": [
     "core:default",
     "global-shortcut:default",
@@ -15,6 +15,14 @@
     "core:window:allow-hide",
     "core:window:allow-show",
     "process:allow-exit",
+    "core:window:allow-cursor-position",
+    "core:window:allow-set-position",
+    "core:window:allow-set-focus",
+    "core:webview:allow-create-webview-window",
+    "core:event:allow-emit-to",
+    "core:event:allow-listen",
+    "core:window:allow-close",
+    "core:window:allow-set-size",
     {
       "identifier": "http:default",
       "allow": [{ "url": "https://api.groq.com/**" }]
