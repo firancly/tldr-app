@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { listen, emitTo } from "@tauri-apps/api/event";
 import { key } from "tauri-plugin-user-input-api";
 import { TrayIcon } from "@tauri-apps/api/tray";
