@@ -24,6 +24,7 @@
     "core:window:allow-close",
     "core:window:allow-set-size",
     "allow-apply-glass-effect",
+    "allow-summarize-text",
     {
       "identifier": "http:default",
       "allow": [{ "url": "https://api.groq.com/**" }]

@@ -1,18 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { listen, emitTo } from "@tauri-apps/api/event";
 import { key } from "tauri-plugin-user-input-api";
 import { TrayIcon } from "@tauri-apps/api/tray";
 import { defaultWindowIcon } from "@tauri-apps/api/app";
 import { Menu } from "@tauri-apps/api/menu";
-import {
-  getCurrentWindow,
-  cursorPosition,
-  Effect,
-} from "@tauri-apps/api/window";
+import { getCurrentWindow, cursorPosition } from "@tauri-apps/api/window";
 import { exit } from "@tauri-apps/plugin-process";
 import { readText, writeText } from "@tauri-apps/plugin-clipboard-manager";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { PhysicalPosition } from "@tauri-apps/api/window";
+import { invoke } from "@tauri-apps/api/core";
 
 async function silentCopy(
   maxAttempts = 10,
@@ -140,8 +137,7 @@ export default function App() {
 
     const setupListener = async () => {
       unlisten = await listen("shortcut-triggered", async (event) => {
-        console.log("Hotkey payload received in react:", event.payload);
-
+        const mode = event.payload as string;
         const text = await silentCopy();
         if (!text) {
           console.log("No new text copied — nothing selected?");
@@ -149,7 +145,17 @@ export default function App() {
         }
 
         console.log(text);
-        await showResultWindow(text, event.payload as string);
+        await showResultWindow("Summarizing...", mode);
+
+        try {
+          const result = await invoke<string>("summarize_text", { text, mode });
+          await emitTo("result", "result-ready", { text: result, mode });
+        } catch (err) {
+          await emitTo("result", "result-ready", {
+            text: `Error: ${err}`,
+            mode,
+          });
+        }
       });
     };
 

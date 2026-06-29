@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-summarize-text"
+description = "Enables the summarize_text command without any pre-configured scope."
+commands.allow = ["summarize_text"]
+
+[[permission]]
+identifier = "deny-summarize-text"
+description = "Denies the summarize_text command without any pre-configured scope."
+commands.deny = ["summarize_text"]

@@ -3,6 +3,7 @@ import { listen, emit } from "@tauri-apps/api/event";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { LogicalSize } from "@tauri-apps/api/dpi";
 import { invoke } from "@tauri-apps/api/core";
+import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 
 interface ResultPayload {
   text: string;
@@ -13,6 +14,13 @@ export default function Popup() {
   const [data, setData] = useState<ResultPayload | null>(null);
   const [displayedText, setDisplayedText] = useState("");
   const contentRef = useRef<HTMLDivElement>(null);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    await writeText(displayedText);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
 
   // Get payload
   useEffect(() => {
@@ -44,7 +52,7 @@ export default function Popup() {
       unlisten = await getCurrentWindow().onFocusChanged(
         ({ payload: focused }) => {
           if (!focused) {
-            getCurrentWindow().close();
+            getCurrentWindow().hide();
           }
         },
       );
@@ -77,7 +85,34 @@ export default function Popup() {
     return () => clearInterval(interval);
   }, [data]);
 
+  // Window animation
   const lastResizeRef = useRef(0);
+  const currentHeightRef = useRef(80);
+  const animationFrameRef = useRef<number | null>(null);
+
+  function animateResize(targetHeight: number, duration = 250) {
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+    }
+
+    const startHeight = currentHeightRef.current;
+    const startTime = performance.now();
+
+    const step = (now: number) => {
+      const t = Math.min((now - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      const height = startHeight + (targetHeight - startHeight) * eased;
+
+      getCurrentWindow().setSize(new LogicalSize(320, height));
+      currentHeightRef.current = height;
+
+      if (t < 1) {
+        animationFrameRef.current = requestAnimationFrame(step);
+      }
+    };
+
+    animationFrameRef.current = requestAnimationFrame(step);
+  }
 
   useEffect(() => {
     if (!contentRef.current) return;
@@ -90,7 +125,7 @@ export default function Popup() {
     lastResizeRef.current = now;
 
     const height = Math.min(500, Math.max(80, contentRef.current.scrollHeight));
-    getCurrentWindow().setSize(new LogicalSize(320, height));
+    animateResize(height);
   }, [displayedText, data]);
 
   return (
@@ -100,15 +135,94 @@ export default function Popup() {
         width: "100%",
         minHeight: "100%",
         boxSizing: "border-box",
-        borderRadius: 16,
+        // borderRadius: 16,
         overflow: "hidden",
-        padding: 16,
-        fontFamily: "sans-serif",
-        color: "#fff",
+        padding: 20,
+        fontFamily: "'Inter', system-ui, sans-serif",
+        color: "#f4f4f5",
+        background:
+          "linear-gradient(160deg, rgba(30, 30, 34, 0.55) 0%, rgba(22, 22, 24, 0.55) 100%)",
+
+        border: "1px solid rgba(255, 255, 255, 0.08)",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.45)",
       }}
     >
-      <strong>{data?.mode === "enhance" ? "Enhanced" : "Summary"}</strong>
-      <p>{displayedText}</p>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          paddingBottom: 12,
+          marginBottom: 14,
+          borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+        }}
+      >
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            fontSize: 15,
+            fontWeight: 600,
+            letterSpacing: 0.2,
+          }}
+        >
+          <span
+            style={{
+              width: 8,
+              height: 8,
+              // borderRadius: "50%",
+              background: data?.mode === "enhance" ? "#a78bfa" : "#50c878",
+              boxShadow: `0 0 8px ${
+                data?.mode === "enhance" ? "#a78bfa" : "#50c878"
+              }`,
+            }}
+          />
+          {data?.mode === "enhance" ? "Enhanced" : "Summary"}
+        </span>
+
+        <button
+          onClick={handleCopy}
+          aria-label={copied ? "Copied" : "Copy"}
+          style={{
+            background: copied
+              ? "rgba(80, 200, 120, 0.18)"
+              : "rgba(255, 255, 255, 0.06)",
+            border: `1px solid ${
+              copied ? "rgba(80, 200, 120, 0.45)" : "rgba(255, 255, 255, 0.14)"
+            }`,
+            borderRadius: 8,
+            color: "#fff",
+            cursor: "pointer",
+            width: 34,
+            height: 34,
+            padding: 0,
+            boxSizing: "border-box",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 15,
+            transition: "background 0.15s, border-color 0.15s, transform 0.1s",
+          }}
+          onMouseDown={(e) => (e.currentTarget.style.transform = "scale(0.92)")}
+          onMouseUp={(e) => (e.currentTarget.style.transform = "scale(1)")}
+          onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+        >
+          {copied ? "✅" : "📋"}
+        </button>
+      </div>
+
+      <p
+        style={{
+          margin: 0,
+          fontSize: 14,
+          lineHeight: 1.65,
+          color: "rgba(244, 244, 245, 0.82)",
+          whiteSpace: "pre-wrap",
+        }}
+      >
+        {displayedText}
+      </p>
     </div>
   );
 }
