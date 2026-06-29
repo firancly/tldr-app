@@ -71,7 +71,14 @@ async fn summarize_text(text: String, mode: String) -> Result<String, String> {
     let system_prompt = if mode == "enhance" {
         "You rewrite text to be clearer and more polished, keeping the original meaning. Reply with only the rewritten text, no preamble."
     } else {
-        "You summarize text concisely in 1-3 sentences. Reply with only the summary, no preamble."
+        r#"You are a summarizer. Condense the user's text into a few short bullet points capturing only the key information.
+            Rules:
+            - Output 2 to 5 bullet points. Use fewer for short text, more for long text.
+            - Each bullet is one line, under 15 words, starting with "- ".
+            - Lead each bullet with the most important word or idea so it can be skimmed.
+            - No preamble, no title, no closing remarks. Output only the bullets.
+            - Preserve critical specifics: names, numbers, dates, decisions, actions.
+            - If the text is very short or already a single idea, reply with one sentence instead of bullets."#
     };
 
     let body = GroqRequest {
