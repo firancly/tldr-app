@@ -4,7 +4,8 @@ Select text anywhere on Windows, hit a hotkey, get an AI result in a floating gl
 
 ## Demo
 
-<!-- Drop your demo video/gif here -->
+<img width="400" height="407" alt="Screen Recording 2026-06-29 145911" src="https://github.com/user-attachments/assets/71f353e0-d5d0-4a14-a8fc-90088c737db3" />
+<img width="400" height="235" alt="Screen Recording 2026-06-29 145212" src="https://github.com/user-attachments/assets/17ef3604-c404-4026-8950-d6dda815ce30" />
 
 ## Features
 
