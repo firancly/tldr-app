@@ -10,8 +10,12 @@ Select text anywhere on Windows, hit a hotkey, get an AI result in a floating gl
 <img width="400" height="235" alt="Screen Recording 2026-06-29 145212" src="https://github.com/user-attachments/assets/17ef3604-c404-4026-8950-d6dda815ce30" />
 
 <p>
-  <img width="400" height="235" alt="Screen Recording 2026-06-29 145212" src="https://github.com/user-attachments/assets/fa95a296-d280-4687-835c-05fd2ddc3439" />
+  <!-- mp4 version -->
+  <!-- <img width="400" height="235" alt="Screen Recording 2026-06-29 145212" src="https://github.com/user-attachments/assets/fa95a296-d280-4687-835c-05fd2ddc3439" /> -->
+  <!-- gif version -->
+  <img width="400" height="214" alt="Screen Recording 2026-06-30 125610" src="https://github.com/user-attachments/assets/c1704a05-8ec3-4673-878c-19318a4db89a" />
 </p>
+
 
 
 ## Features
