@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+﻿import { useEffect } from "react";
 import { listen, emitTo } from "@tauri-apps/api/event";
 import { key } from "tauri-plugin-user-input-api";
 import { TrayIcon } from "@tauri-apps/api/tray";
@@ -10,6 +10,8 @@ import { readText, writeText } from "@tauri-apps/plugin-clipboard-manager";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { PhysicalPosition } from "@tauri-apps/api/window";
 import { invoke } from "@tauri-apps/api/core";
+import { check } from "@tauri-apps/plugin-updater";
+import { relaunch } from "@tauri-apps/plugin-process";
 
 async function silentCopy(
   maxAttempts = 10,
@@ -38,6 +40,11 @@ async function silentCopy(
 async function showResultWindow(text: string, mode: string) {
   const pos = await cursorPosition();
   const payload = { text, mode };
+  // const [hotkeys, setHotkeys] = useState({
+  //   summarize: "F9",
+  //   enhance: "F10",
+  //   custom: "F11",
+  // });
 
   const existing = await WebviewWindow.getByLabel("result");
   if (existing) {
@@ -60,6 +67,7 @@ async function showResultWindow(text: string, mode: string) {
     skipTaskbar: true,
     shadow: false,
     transparent: true,
+    dragDropEnabled: true,
   });
 
   const unlistenReady = await listen("popup-ready", async () => {
@@ -75,6 +83,20 @@ async function showResultWindow(text: string, mode: string) {
 }
 
 export default function App() {
+  // Check for updates
+  useEffect(() => {
+    const checkUpdate = async () => {
+      const update = await check();
+      if (!update) return;
+      const yes = confirm(`v${update.version} available. Install now?`);
+      if (!yes) return;
+      await update.downloadAndInstall();
+      await relaunch();
+    };
+
+    checkUpdate();
+  }, []);
+
   // Setup Tray
   useEffect(() => {
     const setupTray = async () => {
@@ -140,11 +162,15 @@ export default function App() {
         const mode = event.payload as string;
         const text = await silentCopy();
         if (!text) {
-          console.log("No new text copied — nothing selected?");
+          console.log("No new text copied â€” nothing selected?");
           return;
         }
 
-        console.log(text);
+        if (mode === "custom") {
+          await showResultWindow(text, "custom");
+          return;
+        }
+
         await showResultWindow("Summarizing...", mode);
 
         try {
@@ -168,11 +194,45 @@ export default function App() {
     };
   }, []);
 
+  // Listen to custom prompt
+  useEffect(() => {
+    let unlisten: () => void;
+
+    const setup = async () => {
+      unlisten = await listen("custom-prompt-submit", async (event) => {
+        const { prompt, selectedText } = event.payload as {
+          prompt: string;
+          selectedText: string;
+        };
+
+        try {
+          const result = await invoke<string>("summarize_text", {
+            text: selectedText,
+            mode: "custom",
+            customPrompt: prompt,
+          });
+
+          await emitTo("result", "custom-result-ready", { text: result });
+        } catch (err) {
+          await emitTo("result", "custom-result-ready", {
+            text: `Error ${err}`,
+          });
+        }
+      });
+    };
+
+    setup();
+
+    return () => {
+      if (unlisten) unlisten();
+    };
+  }, []);
+
   return (
     <div>
       <div>
         <h1>SNAP</h1>
-        <p>Press Alt + Shift + S to test</p>
+        <p>Press F9/F10/F11 to summarize/enhance/prompt</p>
       </div>
     </div>
   );

@@ -23,8 +23,13 @@
     "core:event:allow-listen",
     "core:window:allow-close",
     "core:window:allow-set-size",
+    "updater:default",
     "allow-apply-glass-effect",
     "allow-summarize-text",
+    "autostart:default",
+    "core:window:allow-start-dragging",
+    "updater:allow-check",
+    "updater:allow-download-and-install",
     {
       "identifier": "http:default",
       "allow": [{ "url": "https://api.groq.com/**" }]
