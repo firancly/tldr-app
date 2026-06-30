@@ -153,7 +153,6 @@ async fn summarize_text(
         let err = res.text().await.unwrap_or_else(|_| "API error".to_string());
         return Err(err);
     }
-    // let parsed: GroqResponse = res.json().await.map_err(|e| e.to_string())?;
 
     if !res.status().is_success() {
         let err = res.text().await.unwrap_or_else(|_| "API error".to_string());
