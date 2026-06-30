@@ -25,3 +25,5 @@ dist-ssr
 .claude
 .env
 latest.json
+# Tauri signing key
+~/.tauri/tldr-app.key
