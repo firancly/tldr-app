@@ -25,15 +25,27 @@ Select text anywhere on Windows, hit a hotkey, and get an AI result in a floatin
 - **Configurable hotkeys**: change either binding from the main window, no restart needed.
 - **Lives in the tray**: closing the main window just hides it, and it keeps listening for your hotkeys in the background.
 
+## Getting started
+
+Once you've installed and launched Snap, it runs quietly in the background instead of opening a window, so it's easy to think nothing happened. It's actually sitting in your system tray, ready to go.
+
+1. Install and run Snap. Nothing visible opens, that's expected.
+2. Look at the bottom right of your taskbar, near the clock. Click the small arrow (`^`) to show hidden icons.
+3. Find the Snap icon there. Left-click it to open the main window, or right-click for options like Show and Quit.
+4. Snap is already listening for hotkeys even with no window open. Go select some text in any app and press `F9` to summarize or `F10` to enhance.
+
+That's it. You don't need to keep the window open, Snap keeps running in the tray and responds to your hotkeys from anywhere.
+
 ## How it works
 
 1. Select any text in any app.
-2. Press the hotkey for the action you want.
+2. Press the hotkey for the action you want. (Default hotkeys: F9, F10, F11)
 3. Snap quietly copies your selection, sends it to Groq, and shows the result in a popup near your cursor. Your existing clipboard is restored afterward so nothing gets clobbered.
+4. To change your hotkeys, API key, or summary length, left click the Snap icon in the tray to open the main window. All the settings live there.
 
 The Groq call runs entirely on the Rust side, so your API key never ends up in the frontend bundle.
 
-## Setup
+## Setup (for development)
 
 ```bash
 npm install
