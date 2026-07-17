@@ -80,7 +80,7 @@ This produces an NSIS installer (and an MSI) in `src-tauri/target/release/bundle
 
 ## AI usage
 
-I wrote the code myself. This was my first time working with Rust and Tauri, so I used AI as a learning and debugging aid along the way: pointing me to the right docs when I got stuck, helping me track down bugs, and helping figure out what it would take to ship to Mac and Linux down the line. The architecture, features, and implementation decisions were mine.
+I wrote the code myself, but I leaned on AI a fair bit while doing it. This was my first time touching Rust or Tauri, so when I got stuck I'd use it to point me at the right docs, help me track down bugs, and explain stuff I didnt understand yet. I also used it to actually get the app building for Mac and Linux, since I only had Windows to work with and had no idea how the cross platform side worked. The decisions about what to build and how it all fits together were mine.
 
 ## Tech stack
 
