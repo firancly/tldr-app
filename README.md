@@ -78,6 +78,10 @@ This produces an NSIS installer (and an MSI) in `src-tauri/target/release/bundle
 - **Translate**: translate selected text into a target language you set.
 - General polish as it comes up.
 
+## AI usage
+
+I wrote the code myself. This was my first time working with Rust and Tauri, so I used AI as a learning and debugging aid along the way: pointing me to the right docs when I got stuck, helping me track down bugs, and helping figure out what it would take to ship to Mac and Linux down the line. The architecture, features, and implementation decisions were mine.
+
 ## Tech stack
 
 - [Tauri v2](https://tauri.app): Rust backend, native window, shortcut, and clipboard APIs.
